@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema ({
         type : String,
         required : true,
     },
-    type : {
+    role : {
         type : String,
         required : true,
         default: "Customer"
@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema ({
     phone :  {
         type : String,
         required : true,
+    },
+    profilePicture: {
+        type: String,
+        required: true,
+        default : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
     }
 })
 
