@@ -43,9 +43,11 @@ export function loginUser(req,res){
             const token = jwt.sign({
                 firstName : user.firstName,
                 lastName : user.lastName,
+                phone : user.phone,
                 email : user.email,
                 role : user.role,
                 profilePicture : user.profilePicture
+                
             },process.env.JWT_SECRET_KEY)
 
             res.json({
@@ -62,15 +64,6 @@ export function loginUser(req,res){
     });
 }
 
-// export function viewUser(req,res){
-//     User.find().then((results)=>{
-//         res.json(results);
-//     }).catch((error)=>{
-//         res.status(500).json({
-//             error : "Can't find users"
-//         })
-//     })
-// }
 
 export async function viewUser(req,res) {
     try{
@@ -84,4 +77,23 @@ export async function viewUser(req,res) {
 
 }
 
+export function isItAdmin(req){
+    let isAdmin =false;
+    if(req.user !=null){
+        if(req.user.role == "admin"){
+            isAdmin = true;
+        }
+    }
+    return isAdmin;
+}
+
+export function isItCustomer(req){
+    let isCustomer =false;
+    if(req.user !=null){
+        if(req.user.role == "customer"){
+            isCustomer = true;
+        }
+    }
+    return isCustomer;
+}
 
