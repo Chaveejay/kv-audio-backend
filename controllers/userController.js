@@ -62,14 +62,26 @@ export function loginUser(req,res){
     });
 }
 
-export function viewUser(req,res){
-    User.find().then((results)=>{
-        res.json(results);
-    }).catch((error)=>{
+// export function viewUser(req,res){
+//     User.find().then((results)=>{
+//         res.json(results);
+//     }).catch((error)=>{
+//         res.status(500).json({
+//             error : "Can't find users"
+//         })
+//     })
+// }
+
+export async function viewUser(req,res) {
+    try{
+    const viewUser = await User.find();
+    res.json(viewUser)
+    }catch{
         res.status(500).json({
-            error : "Can't find users"
-        })
-    })
+             error : "Can't find users"
+            })
+    }
+
 }
 
 

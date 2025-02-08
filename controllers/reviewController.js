@@ -29,20 +29,22 @@ export function addReview(req,res){
     })
 }
 
-export function getReviews(req,res){
+export async function getReviews(req,res){
     const user = req.user;
-    if(user == null || user.role != "admin"){
-        Review.find({isApproved : true}).then((reviews)=>{
-            res.json(reviews);
-        })
-        return
+    try{
+    if (user.role == "admin"){
+        const reviews = await Review.find()
+        res.json(reviews);
     }
-
-    if(user.role == "admin"){
-        Review.find().then((reviews)=>{
-            res.json(reviews);
-        })
+    else{
+        const reviews = await Review.find({isApproved:true})
+        res.json(reviews);
     }
+}catch(error){
+    res.status(500).json({
+        error : "Faild to get reviews"
+    })
+}
 }
 
 export function deleteReviews(req,res){
@@ -86,29 +88,34 @@ export function deleteReviews(req,res){
     }
 }
 
-export function approveReview(req,res){
+export async function approveReview(req,res){
     const email = req.params.email;
+    try{
+    if(req.user.role == "admin"){
+        const result = await Review.updateOne({
+            email: email
+        },{
+            isApproved : true
+        });
+    
+        if (result.modifiedCount > 0) {
+            return res.json({ message: "Review updated successfully" });
+        }
+    
+        return res.status(404).json({ error: "Review not found or already approved" });
 
-    if(req.user == null){
-        res.status(401).json({
-            message : "Please login and try again"
-        })
-    }
-
-    if (req.user.role == "admin"){
-        Review.updateOne({
-        email : email    
-        },
-        {
-            isApproved : true,
-        }).then(()=>{
-            res.json ({message :"Review approved successfully"});
-        }).catch(()=>{
-            res.status(500).json({ error : "Review approval failed"})
-        })
+        
     }else{
-        res.status(403).json({
-            error : "You are not authorized to perform this action"
-        })
-    }
+
+        return res.status(403).json({
+            error : "Unauthorized Action"
+        }) 
 }
+    
+}catch{
+    res.status(500).json({
+        error : "There is an error updating review"
+    })
+}
+}
+   
