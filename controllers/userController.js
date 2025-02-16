@@ -52,10 +52,11 @@ export function loginUser(req,res){
 
             res.json({
                 message : "Login Success",
-                token : token
+                token : token,
+                user : user
             })
         }else{
-            res.json({
+            res.status(401).json({
                 error : "Login Failed"
             })
         }
